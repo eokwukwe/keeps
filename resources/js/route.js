@@ -1,17 +1,30 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-
-import ExampleComponent from "./components/ExampleComponent.vue";
-
-Vue.use(VueRouter);
-
-export default new VueRouter({
-    mode: "history"
-});
+import Home from "./views/Home.vue";
+import Login from "./views/Login.vue";
+import Register from "./views/Register.vue";
+import Dashboard from "./views/Dashboard.vue";
 
 export const routes = [
     {
-        path: "/",
-        component: ExampleComponent
+        path: '/',
+        name: 'HomePage',
+        component: Home
+    },
+    {
+        path: "/register",
+        name: "Register",
+        component: Register,
+        meta: { guestOnly: true }
+    },
+    {
+        path: "/login",
+        name: "Login",
+        component: Login,
+        meta: { guestOnly: true }
+    },
+    {
+        path: "/dashboard",
+        name: "Dashboard",
+        component: Dashboard,
+        meta: { authOnly: true }
     }
 ];

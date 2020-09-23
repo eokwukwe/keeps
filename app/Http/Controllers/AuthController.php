@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -34,18 +36,47 @@ class AuthController extends Controller
         ], 201);
     }
 
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required']
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        return $this->responseWithToken($token, $user);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+
+        return response()->json([
+            'message' => 'Log out successful'
+        ], 200);
+    }
+
     /**
      * Get the token array structure.
      *
-     * @param  string $token
-     *
+     * @param string $token
+     * @param \Illuminate\Database\Eloquent\Model $user
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken($token)
+    protected function responseWithToken($token, $user)
     {
         return response()->json([
             'access_token' => $token,
-            'token_type' => 'bearer',
+            'user' => $user,
         ]);
     }
 }

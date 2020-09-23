@@ -12,10 +12,11 @@
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
     </head>
 
     <body>
-        <div id="app">
+        <div id="app" class="bg-light">
             <app></app>
         </div>
 
