@@ -53,7 +53,9 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth-token')->plainTextToken;
 
-        return $this->responseWithToken($token, $user);
+        return response()->json([
+            'access_token' => $token
+        ]);
     }
 
     public function logout(Request $request)
@@ -63,20 +65,5 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Log out successful'
         ], 200);
-    }
-
-    /**
-     * Get the token array structure.
-     *
-     * @param string $token
-     * @param \Illuminate\Database\Eloquent\Model $user
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function responseWithToken($token, $user)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'user' => $user,
-        ]);
     }
 }
