@@ -69,6 +69,8 @@ class StudyMaterialController extends Controller
      */
     public function update(Request $request, StudyMaterial $studyMaterial)
     {
+        $this->authorize('update', $studyMaterial);
+
         $request->validate([
             'title' => [
                 'sometimes',
@@ -82,8 +84,6 @@ class StudyMaterialController extends Controller
             'description' => ['sometimes', 'required', 'string', 'min:8'],
             'category_id' => ['sometimes', 'required', 'exists:App\Category,id']
         ]);
-
-        $this->authorize('update', $studyMaterial);
 
         $studyMaterial->update([
             'title' => $request->input('title', $studyMaterial->title),
