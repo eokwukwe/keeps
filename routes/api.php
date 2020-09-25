@@ -28,6 +28,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     
     Route::apiResource('categories', 'CategoryController');
 
+    Route::apiResource('study-materials', 'StudyMaterialController');
+
 });
 
 

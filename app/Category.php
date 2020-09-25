@@ -12,4 +12,9 @@ class Category extends Model
      * @var array
      */
     protected $fillable = [ 'name' ];
+
+    public function studyMaterials()
+    {
+            return $this->hasMany(StudyMaterial::class);
+    }
 }
