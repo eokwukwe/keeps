@@ -1,69 +1,69 @@
 <template>
-  <nav class="navbar navbar-expand navbar-dark bg-dark">
+  <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top">
     <div id="navigation" class="container">
       <div class="navbar-header">
         <router-link class="navbar-brand" to="/">Keeps</router-link>
       </div>
       <ul class="nav navbar-nav">
-        <router-link 
-          v-if="!isLoggedIn" 
-          class="nav-item nav-link" 
-          :to="{ name: 'Login' }"
+        <router-link
+          v-if="!isLoggedIn"
+          class="nav-item nav-link bg-primary mr-2 rounded-sm"
+          :to="{ name: 'LoginPage' }"
         >
-          LOGIN
+          Login
         </router-link>
 
         <router-link
           v-if="!isLoggedIn"
-          class="nav-item nav-link"
-          :to="{ name: 'Register' }"
+          class="nav-item nav-link border border-primary rounded-sm"
+          :to="{ name: 'RegisterPage' }"
         >
-          REGISTER
+          Register
         </router-link>
 
         <router-link
           v-if="isLoggedIn"
           class="nav-item nav-link"
-          :to="{ name: 'Dashboard' }"
+          :to="{ name: 'DashboardPage' }"
         >
           Dashboard
         </router-link>
-        
-        <a class="nav-item nav-link" 
-          v-if="isLoggedIn" 
-          @click.prevent="logout" 
-          href="#"
+
+        <button
+          class="nav-item nav-link btn btn-sm btn-warning text-dark font-weight-bold"
+          v-if="isLoggedIn"
+          @click.prevent="handleLogout"
         >
           Logout
-        </a>
+        </button>
       </ul>
     </div>
   </nav>
 </template>
 
 <script>
-  import user from "../apis/user";
+  import { mapGetters, mapActions } from "vuex";
 
   export default {
-    data() {
-      return {
-        isLoggedIn: false,
-      };
+    computed: {
+      ...mapGetters(["isLoggedIn"]),
     },
-    mounted() {
-      this.$root.$on("login", () => {
-        this.isLoggedIn = true;
-      });
 
-      this.isLoggedIn = !!localStorage.getItem("token");
+    created() {
+      const guestRoutes = ["LoginPage", "RegisterPage", "HomePage"];
+      const currentRoute = this.$router.history.current.name;
+
+      if (!guestRoutes.includes(currentRoute)) {
+        this.loggedIn();
+      }
     },
+
     methods: {
-      logout() {
-        user.logout().then(() => {
-          localStorage.removeItem("token");
-          this.isLoggedIn = false;
-          this.$router.push({ name: "Login" });
-        });
+      ...mapActions(["logout", "loggedIn"]),
+
+      async handleLogout() {
+        await this.logout();
+        this.$router.push({ name: "LoginPage" });
       },
     },
   };
@@ -73,9 +73,6 @@
   .router-link-exact-active {
     color: #ffffff !important;
     transition: all 0.25s;
-    /* background-color: gray;
-                border-radius: 3px;
-                text-transform: capitalize; */
   }
 
   .navbar {

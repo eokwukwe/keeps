@@ -1,49 +1,57 @@
 <template>
-  <div class="mt-4">
-    <div class="row">
-      <div class="col-sm-8 col-md-6 col-lg-4 offset-sm-2 offset-md-3 offset-lg-4">
-        <div class="card">
-          <h4 class="card-header text-center py-1">Login</h4>
-          <div class="card-body">
-            <form @submit.prevent="login">
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input
-                  type="email"
-                  v-model="form.email"
-                  class="form-control form-control-sm"
-                  id="email"
-                  placeholder="example@mail.com"
-                />
-                <span class="text-danger error-text" v-if="errors.email">{{ errors.email[0] }}</span>
-              </div>
-              <div class="form-group">
-                <label for="password">Password:</label>
-                <input
-                  type="password"
-                  v-model="form.password"
-                  class="form-control form-control-sm"
-                  id="password"
-                  placeholder="Enter password"
-                />
-                <span class="text-danger error-text" v-if="errors.password">{{ errors.password[0] }}</span>
-              </div>
-              <button type="submit" class="btn btn-primary btn-sm btn-block" :disabled="isLoading">
-                <span v-if="isLoading">
-                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  <span class="sr-only">Loading...</span>
-                </span>Login
-              </button>
-            </form>
+  <div class="d-flex justify-content-center align-items-center login">
+    <div class="card" style="max-width: 400px; min-width: 350px">
+      <h4 class="card-header text-center py-1">Login</h4>
+      <div class="card-body">
+        <form @submit.prevent="handleSubmit">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              v-model="form.email"
+              class="form-control form-control-sm"
+              id="email"
+              placeholder="example@mail.com"
+            />
+            <span class="text-danger error-text" v-if="loginErrors.email">{{
+              loginErrors.email[0]
+            }}</span>
           </div>
-        </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input
+              type="password"
+              v-model="form.password"
+              class="form-control form-control-sm"
+              id="password"
+              placeholder="Enter password"
+            />
+            <span class="text-danger error-text" v-if="loginErrors.password">{{
+              loginErrors.password[0]
+            }}</span>
+          </div>
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm btn-block"
+            :disabled="loading"
+          >
+            <span v-if="loading">
+              <span
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              <span class="sr-only">Loading...</span> </span
+            >Login
+          </button>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import user from "../apis/user";
+  import { mapGetters, mapActions } from "vuex";
 
   export default {
     name: "LoginForm",
@@ -54,30 +62,23 @@
           email: "",
           password: "",
         },
-        errors: [],
-        isLoading: false,
       };
     },
+
+    computed: {
+      ...mapGetters(["loading", "loginErrors", "isLoggedIn"]),
+    },
+
     methods: {
-      async login() {
-        this.isLoading = true;
-        this.errors = [];
+      ...mapActions(["login", "clearErrors", "loggedOut"]),
 
-        try {
-          const res = await user.login(this.form);
+      async handleSubmit() {
+        this.clearErrors("loginErrors");
 
-          this.$root.$emit("login", true);
+        await this.login(this.form);
 
-          localStorage.setItem("token", res.data.access_token);
-
-          this.$router.push({ name: "Dashboard" });
-        } catch (error) {
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-          }
-        } finally {
-          this.form = { email: "", password: "" };
-          this.isLoading = false;
+        if (this.isLoggedIn) {
+          this.$router.push({ name: "DashboardPage" });
         }
       },
     },
@@ -85,6 +86,10 @@
 </script>
 
 <style scoped>
+  .login {
+    height: 100vh;
+  }
+
   .error-text {
     font-size: 0.7rem;
   }

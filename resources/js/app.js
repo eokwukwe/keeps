@@ -1,11 +1,15 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
 
 import { routes } from "./route";
 import App from "./components/App.vue";
+import store from "./store/index"
 
 require("./bootstrap");
 
+Vue.use(BootstrapVue);
+Vue.use(IconsPlugin);
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -47,6 +51,7 @@ router.beforeEach((to, from, next) => {
 
 const app = new Vue({
     el: "#app",
-    components: { App },
+    components: {App},
+    store,
     router
 });

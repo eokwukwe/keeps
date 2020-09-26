@@ -1,7 +1,7 @@
 <template>
-  <div class="h-screen">
+  <div class="">
     <Navigation />
-    <div class="container">
+    <div class="container h-screen">
       <router-view></router-view>
     </div>
   </div>
@@ -17,12 +17,15 @@
 
     components: {
       Navigation,
-      Home
+      Home,
     },
   };
 </script>
 
 <style>
+  @import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
+  @import "../../../node_modules/bootstrap-vue/dist/bootstrap-vue.min.css";
+
   .h-screen {
     min-height: 100vh;
   }

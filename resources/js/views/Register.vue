@@ -1,77 +1,91 @@
 <template>
-  <div class="mt-4">
-    <div class="row">
-      <div class="col-sm-8 col-md-6 col-lg-4 offset-sm-2 offset-md-3 offset-lg-4">
-        <div class="card">
-          <h4 class="card-header text-center py-1">Register</h4>
-          <div class="card-body">
-            <form @submit.prevent="register">
-              <div class="form-group">
-                <label for="name">Name:</label>
-                <input
-                  type="text"
-                  v-model="form.name"
-                  class="form-control form-control-sm"
-                  id="name"
-                  placeholder="Jame Smith"
-                />
-                <span class="text-danger error-text" v-if="errors.name">{{ errors.name[0] }}</span>
-              </div>
-
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input
-                  type="email"
-                  v-model="form.email"
-                  class="form-control form-control-sm"
-                  id="email"
-                  placeholder="example@mail.com"
-                />
-                <span class="text-danger error-text" v-if="errors.email">{{ errors.email[0] }}</span>
-              </div>
-
-              <div class="form-group">
-                <label for="password">Password:</label>
-                <input
-                  type="password"
-                  v-model="form.password"
-                  class="form-control form-control-sm"
-                  id="password"
-                  placeholder="Enter password"
-                />
-                <span class="text-danger error-text" v-if="errors.password">{{ errors.password[0] }}</span>
-              </div>
-
-              <div class="form-group">
-                <label for="password_confirmation">Confirm Password:</label>
-                <input
-                  type="password"
-                  v-model="form.password_confirmation"
-                  class="form-control form-control-sm"
-                  id="password_confirmation"
-                  placeholder="Enter password again"
-                />
-                <span
-                  class="text-danger error-text"
-                  v-if="errors.password_confirmation"
-                >{{ errors.password_confirmation[0] }}</span>
-              </div>
-              <button type="submit" class="btn btn-primary btn-sm btn-block" :disabled="isLoading">
-                <span v-if="isLoading">
-                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  <span class="sr-only">Loading...</span>
-                </span>
-                Register
-              </button>
-            </form>
+  <div class="d-flex justify-content-center align-items-center register">
+    <div class="card" style="max-width: 400px; min-width: 350px">
+      <h4 class="card-header text-center py-1">Register</h4>
+      <div class="card-body">
+        <form @submit.prevent="handleRegister">
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input
+              type="text"
+              v-model="form.name"
+              class="form-control form-control-sm"
+              id="name"
+              placeholder="Jame Smith"
+            />
+            <span class="text-danger error-text" v-if="registerErrors.name">{{
+              registerErrors.name[0]
+            }}</span>
           </div>
-        </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              v-model="form.email"
+              class="form-control form-control-sm"
+              id="email"
+              placeholder="example@mail.com"
+            />
+            <span class="text-danger error-text" v-if="registerErrors.email">{{
+              registerErrors.email[0]
+            }}</span>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input
+              type="password"
+              v-model="form.password"
+              class="form-control form-control-sm"
+              id="password"
+              placeholder="Enter password"
+            />
+            <span
+              class="text-danger error-text"
+              v-if="registerErrors.password"
+              >{{ registerErrors.password[0] }}</span
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="password_confirmation">Confirm Password:</label>
+            <input
+              type="password"
+              v-model="form.password_confirmation"
+              class="form-control form-control-sm"
+              id="password_confirmation"
+              placeholder="Enter password again"
+            />
+            <span
+              class="text-danger error-text"
+              v-if="registerErrors.password_confirmation"
+              >{{ registerErrors.password_confirmation[0] }}</span
+            >
+          </div>
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm btn-block"
+            :disabled="isLoading"
+          >
+            <span v-if="isLoading">
+              <span
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              <span class="sr-only">Loading...</span>
+            </span>
+            Register
+          </button>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  import { mapGetters, mapActions } from "vuex";
   import user from "../apis/user";
 
   export default {
@@ -85,32 +99,23 @@
           password: "",
           password_confirmation: "",
         },
-        errors: [],
-        isLoading: false,
       };
     },
 
+    computed: {
+      ...mapGetters(["loading", "registerErrors", "isRegistered"]),
+    },
+
     methods: {
-      async register() {
-        this.isLoading = true;
-        this.errors = [];
+      ...mapActions(["register", "clearErrors"]),
 
-        try {
-          const res = await user.register(this.form);
-          this.$router.push({ name: "Login" });
-        } catch (error) {
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors;
-          }
-        } finally {
-          this.form = {
-            name: "",
-            email: "",
-            password: "",
-            password_confirmation: "",
-          };
+      async handleRegister() {
+        this.clearErrors('registerErrors');
 
-          this.isLoading = false;
+        await this.register(this.form);
+
+        if (this.isRegistered) {
+          this.$router.push({ name: "LoginPage" });
         }
       },
     },
@@ -118,6 +123,10 @@
 </script>
 
 <style scoped>
+  .register {
+    height: 100vh;
+  }
+
   .error-text {
     font-size: 0.7rem;
   }
