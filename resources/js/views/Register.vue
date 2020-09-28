@@ -66,9 +66,9 @@
           <button
             type="submit"
             class="btn btn-primary btn-sm btn-block"
-            :disabled="isLoading"
+            :disabled="loading"
           >
-            <span v-if="isLoading">
+            <span v-if="loading">
               <span
                 class="spinner-border spinner-border-sm"
                 role="status"

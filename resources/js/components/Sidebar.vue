@@ -11,9 +11,9 @@
             class="form-control form-control-sm"
             placeholder="How to create custom hooks"
           />
-          <!-- <span class="text-danger error-text" v-if="loginErrors.email">{{
-            loginErrors.email[0]
-          }}</span> -->
+          <span class="text-danger error-text" v-if="addResourceErrors.title">{{
+            addResourceErrors.title[0]
+          }}</span>
         </div>
         <div class="form-group">
           <label for="link">Link:</label>
@@ -24,9 +24,9 @@
             class="form-control form-control-sm"
             placeholder="https://reactjs.org"
           />
-          <!-- <span class="text-danger error-text" v-if="loginErrors.password">{{
-            loginErrors.password[0]
-          }}</span> -->
+          <span class="text-danger error-text" v-if="addResourceErrors.link">{{
+            addResourceErrors.link[0]
+          }}</span>
         </div>
         <div class="mb-4">
           <label for="type">Type:</label>
@@ -43,13 +43,16 @@
               {{ resourceType }}
             </option>
           </select>
+          <span class="text-danger error-text" v-if="addResourceErrors.type">{{
+            addResourceErrors.type[0]
+          }}</span>
         </div>
-        <!-- <button
+        <button
           type="submit"
           class="btn btn-primary btn-sm btn-block"
-          :disabled="loading"
+          :disabled="isAdding"
         >
-          <span v-if="loading">
+          <span v-if="isAdding">
             <span
               class="spinner-border spinner-border-sm"
               role="status"
@@ -57,14 +60,15 @@
             ></span>
             <span class="sr-only">Loading...</span> </span
           >Add
-        </button> -->
-        <button type="submit" class="btn btn-sm btn-primary">add</button>
+        </button>
       </form>
     </div>
   </b-sidebar>
 </template>
 
 <script>
+  import { mapGetters, mapActions } from "vuex";
+
   export default {
     name: "Sidebar",
 
@@ -79,11 +83,23 @@
       };
     },
 
+    computed: {
+      ...mapGetters(["isAdding", "addResourceErrors", "resourceAdded"]),
+    },
+
     methods: {
-      handleAdd(e) {
-        console.log(this.types);
-      }
-    }
+      ...mapActions(["addResource", "clearResourceErrors"]),
+
+      async handleAdd(e) {
+        this.clearResourceErrors();
+
+        await this.addResource(this.form);
+
+        if (this.resourceAdded) {
+          this.$router.go(0);
+        }
+      },
+    },
   };
 </script>
 

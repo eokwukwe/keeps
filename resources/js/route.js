@@ -7,7 +7,8 @@ export const routes = [
     {
         path: "/",
         name: "HomePage",
-        component: Home
+        component: Home,
+        meta: { guestOnly: true }
     },
     {
         path: "/register",

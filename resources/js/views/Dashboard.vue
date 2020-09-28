@@ -5,12 +5,21 @@
     <div v-else class="home pt-5">
       <h3 class="mb-2">Your Resources</h3>
       <div class="row">
+        <div v-if="noResource">
+          <p>You have not added any resources</p>
+        </div>
+
         <div
+          v-else
           class="col-md-6 mb-3"
-          v-for="(material, i) in materials"
-          :key="i"
+          v-for="resource in allResources"
+          :key="resource.id"
         >
-          <study-material-card :material="material" />
+          <study-material-card
+            :isDeleting="isDeleting"
+            :resource="resource"
+            :deleteResource="deleteResource"
+          />
         </div>
       </div>
 
@@ -27,51 +36,23 @@
   import StudyMaterialCard from "../components/StudyMaterialCard";
 
   export default {
-    data() {
-      return {
-        materials: [
-          {
-            _id: "1",
-            title: "Form validation with Next.js/React part 2",
-            description:
-              "Learn how to validate custom input components with 'react hook form'",
-            link: "https://www.youtube.com/watch?v=fm_UA4_0XBE",
-            type: "video",
-            category: "react",
-          },
-          {
-            _id: "2",
-            title: "Setup project from Github",
-            description:
-              "Short guide how to setup a starting project in order to work on my tutorials.",
-            link: "https://eincode.com/blogs/setup-project-from-github-repo",
-            type: "blog",
-            category: "github",
-          },
-          {
-            _id: "3",
-            title: "React hook form validation",
-            description: "Custom form validation with react hooks",
-            link:
-              "https://eincode.com/blogs/learn-how-to-validate-custom-input-components-with-react-hook-form",
-            type: "blog",
-          },
-        ],
-      };
-    },
-
     components: { Spinner, StudyMaterialCard, Sidebar },
 
     computed: {
-      ...mapGetters(["loggedInUser", "loading"]),
+      ...mapGetters(["loggedInUser", "loading", "allResources", "isDeleting"]),
+
+      noResource() {
+        return this.allResources.length === 0;
+      },
     },
 
     methods: {
-      ...mapActions(["getLoggedInUser"]),
+      ...mapActions(["getLoggedInUser", "getAllResources", "deleteResource"]),
     },
 
     mounted() {
       this.getLoggedInUser();
+      this.getAllResources();
     },
   };
 </script>

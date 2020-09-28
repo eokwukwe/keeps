@@ -53,7 +53,7 @@ const actions = {
                 commit("setLoginErrors", error.response.data.errors);
             }
 
-            // localStorage.removeItem("token");
+            localStorage.removeItem("token");
         } finally {
             commit("endLoading");
         }
