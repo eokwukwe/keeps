@@ -19,17 +19,17 @@ Route::post('login', 'AuthController@login');
 Route::post('register', 'AuthController@register');
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('user', 'AuthController@getUser');
+
     Route::post('logout', 'AuthController@logout');
-    
-    Route::apiResource('categories', 'CategoryController');
 
-    Route::apiResource('study-materials', 'StudyMaterialController');
+    Route::get('study-materials', 'StudyMaterialController@getUserMaterials');
 
+    Route::apiResource('study-materials', 'StudyMaterialController')
+        ->except(['index']);
 });
-
-

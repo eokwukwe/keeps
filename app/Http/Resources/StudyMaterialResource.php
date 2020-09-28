@@ -17,10 +17,8 @@ class StudyMaterialResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'description' => $this->description,
             'link' => $this->link,
             'type' => $this->type,
-            'category' => new CategoryResource($this->whenLoaded('categories')),
             'owner' => new UserResource($this->whenLoaded('users')),
             'created' => [
                 'created_at_human' => $this->created_at->diffForHumans(),

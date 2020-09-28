@@ -14,9 +14,11 @@ class StudyMaterialController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function getUserMaterials(Request $request)
     {
-        return StudyMaterialResource::collection(StudyMaterial::all());
+        return StudyMaterialResource::collection(
+            $request->user()->studyMaterials
+        );
     }
 
     /**
@@ -33,16 +35,12 @@ class StudyMaterialController extends Controller
             ],
             'link' => ['required', 'url'],
             'type' => ['required', 'string',],
-            'description' => ['required', 'string', 'min:8'],
-            'category_id' => ['required', 'exists:App\Category,id']
         ]);
 
         $material = StudyMaterial::create([
             'title' => $request->title,
             'type' => $request->type,
-            'description' => $request->description,
             'link' => $request->link,
-            'category_id' => $request->category_id,
             'user_id' => $request->user()->id
         ]);
 
@@ -57,6 +55,8 @@ class StudyMaterialController extends Controller
      */
     public function show(StudyMaterial $studyMaterial)
     {
+        $this->authorize('view', $studyMaterial);
+
         return new StudyMaterialResource($studyMaterial);
     }
 
@@ -81,8 +81,6 @@ class StudyMaterialController extends Controller
             ],
             'link' => ['sometimes', 'required', 'url'],
             'type' => ['sometimes', 'required', 'string',],
-            'description' => ['sometimes', 'required', 'string', 'min:8'],
-            'category_id' => ['sometimes', 'required', 'exists:App\Category,id']
         ]);
 
         $studyMaterial->update([
@@ -90,14 +88,6 @@ class StudyMaterialController extends Controller
             'link' => $request->input('link', $studyMaterial->link),
             'type' => $request->input('type', $studyMaterial->type),
             'user_d' => $request->user()->id,
-            'description' => $request->input(
-                'description',
-                $studyMaterial->description
-            ),
-            'category_id' => $request->input(
-                'category_id',
-                $studyMaterial->category_id
-            ),
         ]);
 
         return response()->json([

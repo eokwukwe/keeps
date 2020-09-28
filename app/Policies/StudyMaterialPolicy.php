@@ -2,24 +2,14 @@
 
 namespace App\Policies;
 
-use App\StudyMaterial;
 use App\User;
+use App\StudyMaterial;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class StudyMaterialPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     *
-     * @param  \App\User  $user
-     * @return mixed
-     */
-    public function viewAny(User $user)
-    {
-        //
-    }
 
     /**
      * Determine whether the user can view the model.
@@ -30,7 +20,7 @@ class StudyMaterialPolicy
      */
     public function view(User $user, StudyMaterial $studyMaterial)
     {
-        //
+        return $user->id === (int)$studyMaterial->user_id;
     }
 
     /**

@@ -52,6 +52,8 @@ const actions = {
             if (error.response.status === 422) {
                 commit("setLoginErrors", error.response.data.errors);
             }
+
+            // localStorage.removeItem("token");
         } finally {
             commit("endLoading");
         }
@@ -66,9 +68,10 @@ const actions = {
 
             commit("setLoggedInUser", data);
         } catch (error) {
-            if (error.response.status === 422) {
-                commit("setErrors", error.response.data.errors);
-            }
+            // if (error.response.status === 422) {
+            //     commit("setErrors", error.response.data.errors);
+            // }
+            console.error(error);
         } finally {
             commit("endLoading");
         }

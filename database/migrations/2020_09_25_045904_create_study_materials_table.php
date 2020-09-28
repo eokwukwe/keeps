@@ -16,13 +16,8 @@ class CreateStudyMaterialsTable extends Migration
         Schema::create('study_materials', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
-            $table->string('description');
             $table->string('link');
             $table->string('type');
-
-            $table->foreignId('category_id')
-                ->constrained()
-                ->onDelete('cascade');
 
             $table->foreignId('user_id')
                 ->constrained()
