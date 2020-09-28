@@ -1,7 +1,12 @@
 import axios from "axios";
 
+console.log("api url", process.env.NODE_ENV);
+
 let baseApi = axios.create({
-    baseURL: "http://keeps.test/api"
+    baseURL:
+        process.env.NODE_ENV === "development"
+            ? "http://keeps.test/api"
+            : "https://fcode-larakeeps.herokuapp.com/api"
 });
 
 let api = function() {
