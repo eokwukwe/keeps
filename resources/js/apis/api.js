@@ -1,7 +1,5 @@
 import axios from "axios";
 
-console.log("api url", process.env.NODE_ENV);
-
 let baseApi = axios.create({
     baseURL:
         process.env.NODE_ENV === "development"
